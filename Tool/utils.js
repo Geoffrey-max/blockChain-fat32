@@ -1,23 +1,16 @@
-const http = require('http');
+const axios = require("axios");
 
 function getPages(start, end) {
-  return http.get(
+  return axios.get(
     "http://reader-challenge.herokuapp.com/reader/" + start + "/" + end,
     response => {
-      var data;
-      response.on("data", function(d) {
-        data += d;
-      });
-      return data
+      return response.data;
     }
   );
-  
 }
 
 function findPow(element) {
-
-    return sha256(JSON.stringify(element))
+  return sha256(JSON.stringify(element));
 }
 
-
-module.exports = { getPages,findPow };
+module.exports = { getPages, findPow };

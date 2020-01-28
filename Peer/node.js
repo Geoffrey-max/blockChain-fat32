@@ -2,7 +2,18 @@ const axios = require("axios");
 class Node {
   constructor(port) {
     this.port = port;
-    //this.connection = axios.post("localhost:5000/newPost",{ "port": 24525 });
+    let _host = this
+    axios
+      .post("http://localhost:5000/newnode",{
+        port: _host.port
+      })
+      .then(function(response) {
+        _host.connexion =  response.data.ports;
+        _host.id =  response.data.id;
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   }
 }
 

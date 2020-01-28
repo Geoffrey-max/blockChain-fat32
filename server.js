@@ -6,7 +6,6 @@ const { getPages } = require("./Tool/utils");
 const Node = require("./Peer/node");
 
 let node = new Node(argv.port);
-console.log(node);
 
 app.use(bodyParser.json());
 app.post("/node/resolve", (req, res) => {
@@ -19,16 +18,18 @@ app.post("/node/resolve", (req, res) => {
   }, timeout);
 });
 
-if (argv.port && argv.port != 5000) {
-  if (node.connection.length >0) {
-    // Start server
-    app.listen(argv.port, () => {
-      console.log(`Server listening`, argv.port);
-    });
+setTimeout(() => {
+  console.log(node);
+  if (argv.port && argv.port != 5000) {
+    if (node) {
+      // Start server
+      app.listen(argv.port, () => {
+        console.log(`Server listening`, argv.port);
+      });
+    } else {
+      console.log("Error : Node not create");
+    }
   } else {
-    console.log("Error : Node not create");
+    console.log("node 'main.js' --port=XXXX");
   }
-} else {
-  console.log("node 'main.js' --port=XXXX");
-}
-
+}, 7000);
