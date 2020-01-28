@@ -9,15 +9,6 @@ class Block {
         this.inf = inf; // INFO Supplementaire
         this.nonce = nonce;
 
-        let blockJson = {
-            id: this.id,
-            hashBackBlock: this.hashBackBlock,
-            fivePages: this.fivePages,
-            idCont: this.idCont,
-            inf: this.inf,
-            nonce: this.nonce
-        }
-
         this.hashthisBlock = null; //hashage du block
     }
 }

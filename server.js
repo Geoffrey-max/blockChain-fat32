@@ -11,14 +11,27 @@ const { getIdBlockChain, findPow } = require("./Tool/utils");
 let node = new Node(argv.port);
 
 app.use(bodyParser.json());
-app.post("/node/resolve", (req, res) => {
+
+app.use(function (req, res, next) {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  next();
+});
+app.post("/node/resolve", (req, res,next) => {
   let { start, end } = req.body;
   let hashLastBlock = null;
   getPages(start, end).then(resdata => {
     pageData = resdata;
     let nonce = 1;
     let block = null;
-    console.log("My Page " + pageData);
+    //console.log("My Page " + pageData);
     if (getIdBlockChain(node.blockChain) === 0) {
       block = new Block(
         getIdBlockChain(node.blockChain),
@@ -33,7 +46,7 @@ app.post("/node/resolve", (req, res) => {
         if (hashthisBlock.substring(0, 1) === "0") {
           block.hashthisBlock = hashthisBlock;
         } else {
-          console.log("nonce");
+          //console.log("nonce");
           block.nonce++;
         }
       }
@@ -57,7 +70,7 @@ app.post("/node/resolve", (req, res) => {
         if (hashthisBlock.substring(0, 1) === "0") {
           block.hashthisBlock = hashthisBlock;
         } else {
-          console.log("nonce");
+          //console.log("nonce");
           block.nonce++;
         }
       }
@@ -72,14 +85,21 @@ app.post("/node/resolve", (req, res) => {
   });
 });
 
-app.post("/sync", (req, res) => {
+app.post("/sync", (req, res,next) => {
   let { block } = req.body;
   node.blockChain.push(block);
   res.status(200).send(node.blockChain);
 });
 
-app.get("/blockchain", (req, res) => {
-  console.log("ok");
+app.post("/syncports", (req, res,next) => {
+  let { ports } = req.body;
+  node.ports = ports;
+  res.send(node.ports);
+});
+
+
+app.get("/blockchain", (req, res,next) => {
+  //console.log("ok");
   res.status(200).send(node.blockChain);
 });
 
