@@ -75,7 +75,12 @@ app.post("/node/resolve", (req, res) => {
 app.post("/sync", (req, res) => {
   let { block } = req.body;
   node.blockChain.push(block);
-  res.status(200).send(node.blockchain);
+  res.status(200).send(node.blockChain);
+});
+
+app.get("/blockchain", (req, res) => {
+  console.log("ok");
+  res.status(200).send(node.blockChain);
 });
 
 setTimeout(() => {
