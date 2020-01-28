@@ -3,11 +3,10 @@ const sha256 = require("sha256");
 
 function getPages(start, end) {
   return axios.get(
-    "http://reader-challenge.herokuapp.com/reader/" + start + "/" + end,
-    response => {
-      return response.data;
-    }
-  );
+    "http://reader-challenge.herokuapp.com/reader/" + start + "/" + end
+  ).then(response => {
+    return response.data;
+  });
 }
 
 function findPow(element) {
