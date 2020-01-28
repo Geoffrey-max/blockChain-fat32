@@ -11,21 +11,29 @@ let node = new Node(argv.port);
 app.use(bodyParser.json());
 app.post("/node/resolve", (req, res) => {
     let { start, end } = req.body;
-    let blockChain = [];
     let id = 0;
     let hashLastBlock = null;
     let pageData = getPages(start, end);
     let nonce = 1;
+    let block = null;
     console.log("My Page " + pageData);
-    blockChain.forEach(block_tst => {
-        if (block_tst.id === (id - 1)) {
-            hashLastBlock = block_tst.hashBackBlock;
-        }
-    });
     if (id === 0) {
-        let block = new Block(id, null, pageData, node.id, null, nonce);
+        block = new Block(id, null, pageData, node.id, null, nonce);
         if (block.hashthisBlock.substr(0) === 0) {
-            blockChain.push(block);
+            node.blockChain.push(block);
+            id++;
+        } else {
+            nonce++;
+        }
+    } else {
+        node.blockChain.forEach(block_tst => {
+            if (block_tst.id === (id - 1)) {
+                hashLastBlock = block_tst.hashBackBlock;
+            }
+        });
+        block = new Block(id, hashLastBlock, pageData, node.id, null, nonce);
+        if (block.hashthisBlock.substr(0) === 0) {
+            node.blockChain.push(block);
             id++;
         } else {
             nonce++;
