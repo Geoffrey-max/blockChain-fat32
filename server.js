@@ -6,38 +6,44 @@ const { getPages } = require("./Tool/utils");
 const Node = require("./Peer/node");
 const Block = require("./Peer/block");
 const axios = require("axios");
+const { getTimeInsert } = require("./Tool/utils");
+const { getIdBlockChain } = require("./Tool/utils");
 
 let node = new Node(argv.port);
 
 app.use(bodyParser.json());
 app.post("/node/resolve", (req, res) => {
   let { start, end } = req.body;
-  let id = 0;
   let hashLastBlock = null;
   let pageData = getPages(start, end);
   let nonce = 1;
   let block = null;
   console.log("My Page " + pageData);
-  if (id === 0) {
-    block = new Block(id, null, pageData, node.id, null, nonce);
-    if (block.hashthisBlock.substr(0) === 0) {
-      node.blockChain.push(block);
-      id++;
-    } else {
-      nonce++;
+  if (getIdBlockChain(node.blockChain) === 0) {
+    block = new Block(getIdBlockChain(node.blockChain), null, pageData, node.id, null, nonce);
+    while (block.hashthisBlock === null) {
+      if (block.hashthisBlock.substring(0, 0) === '0') {
+        node.blockChain.push(block);
+      } else {
+        console.log("nonce");
+        nonce++;
+        block = new Block(getIdBlockChain(node.blockChain), null, pageData, node.id, null, nonce);
+      }
     }
   } else {
     node.blockChain.forEach(block_tst => {
-      if (block_tst.id === id - 1) {
+      if (block_tst.id === (getIdBlockChain(node.blockChain) - 2)) {
         hashLastBlock = block_tst.hashBackBlock;
       }
     });
-    block = new Block(id, hashLastBlock, pageData, node.id, null, nonce);
-    if (block.hashthisBlock.substr(0) === 0) {
-      node.blockChain.push(block);
-      id++;
-    } else {
-      nonce++;
+    block = new Block(getIdBlockChain(node.blockChain), hashLastBlock, pageData, node.id, null, nonce);
+    while (block.hashthisBlock === null) {
+      if (block.hashthisBlock.substring(0, 0) === '0') {
+        node.blockChain.push(block);
+      } else {
+        nonce++;
+        block = new Block(getIdBlockChain(node.blockChain), hashLastBlock, pageData, node.id, null, nonce);
+      }
     }
   }
 

@@ -1,5 +1,5 @@
 const axios = require("axios");
-const sha256 = require("sha256")
+const sha256 = require("sha256");
 
 function getPages(start, end) {
   return axios.get(
@@ -14,4 +14,13 @@ function findPow(element) {
   return sha256(JSON.stringify(element));
 }
 
-module.exports = { getPages, findPow };
+function getTimeInsert() {
+  let time = new Date();
+  return time.now();
+}
+
+function getIdBlockChain(blockChain) {
+  return blockChain.length;
+}
+
+module.exports = { getPages, findPow, getTimeInsert, getIdBlockChain };
