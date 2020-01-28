@@ -1,4 +1,5 @@
 const axios = require("axios");
+const sha256 = require("sha256")
 
 function getPages(start, end) {
   return axios.get(

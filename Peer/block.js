@@ -1,4 +1,4 @@
-var { stringifyAndHashElement } = require('../Tool/utils');
+var { findPow } = require('../Tool/utils');
 
 class Block {
     constructor(id, hashBackBlock, fivePages, idCont, inf, nonce) {
@@ -18,6 +18,8 @@ class Block {
             nonce: this.nonce
         }
 
-        this.hashthisBlock = stringifyAndHashElement(blockJson); //hashage du block
+        this.hashthisBlock = findPow(blockJson); //hashage du block
     }
 }
+
+module.exports = Block;

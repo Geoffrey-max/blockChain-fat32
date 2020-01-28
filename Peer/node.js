@@ -2,6 +2,7 @@ const axios = require("axios");
 class Node {
   constructor(port) {
     this.port = port;
+    this.blockchain = [];
     let _host = this
     axios
       .post("http://localhost:5000/newnode",{
