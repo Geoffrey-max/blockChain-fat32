@@ -18,7 +18,7 @@ class Block {
             nonce: this.nonce
         }
 
-        this.hashthisBlock = findPow(blockJson); //hashage du block
+        this.hashthisBlock = null; //hashage du block
     }
 }
 

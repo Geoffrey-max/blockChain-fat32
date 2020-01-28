@@ -6,8 +6,7 @@ const { getPages } = require("./Tool/utils");
 const Node = require("./Peer/node");
 const Block = require("./Peer/block");
 const axios = require("axios");
-const { getTimeInsert } = require("./Tool/utils");
-const { getIdBlockChain } = require("./Tool/utils");
+const { getTimeInsert, getIdBlockChain, findPow } = require("./Tool/utils");
 
 let node = new Node(argv.port);
 
@@ -20,34 +19,49 @@ app.post("/node/resolve", (req, res) => {
   let block = null;
   console.log("My Page " + pageData);
   if (getIdBlockChain(node.blockChain) === 0) {
-    block = new Block(getIdBlockChain(node.blockChain), null, pageData, node.id, null, nonce);
+    block = new Block(
+      getIdBlockChain(node.blockChain),
+      null,
+      pageData,
+      node.id,
+      null,
+      nonce
+    );
     while (block.hashthisBlock === null) {
-      if (block.hashthisBlock.substring(0, 0) === '0') {
-        node.blockChain.push(block);
+      let hashthisBlock = findPow(block);
+      if (hashthisBlock.substring(0, 1) === "0") {
+        block.hashthisBlock = hashthisBlock;
       } else {
         console.log("nonce");
-        nonce++;
-        block = new Block(getIdBlockChain(node.blockChain), null, pageData, node.id, null, nonce);
+        block.nonce++;
       }
     }
+    node.blockChain.push(block);
   } else {
     node.blockChain.forEach(block_tst => {
-      if (block_tst.id === (getIdBlockChain(node.blockChain) - 2)) {
-        hashLastBlock = block_tst.hashBackBlock;
+      if (block_tst.id === getIdBlockChain(node.blockChain) - 1) {
+        hashLastBlock = block_tst.hashthisBlock;
       }
     });
-    block = new Block(getIdBlockChain(node.blockChain), hashLastBlock, pageData, node.id, null, nonce);
+    block = new Block(
+      getIdBlockChain(node.blockChain),
+      hashLastBlock,
+      pageData,
+      node.id,
+      null,
+      nonce
+    );
     while (block.hashthisBlock === null) {
-      if (block.hashthisBlock.substring(0, 0) === '0') {
-        node.blockChain.push(block);
+      let hashthisBlock = findPow(block);
+      if (hashthisBlock.substring(0, 1) === "0") {
+        block.hashthisBlock = hashthisBlock;
       } else {
-        nonce++;
-        block = new Block(getIdBlockChain(node.blockChain), hashLastBlock, pageData, node.id, null, nonce);
+        console.log("nonce");
+        block.nonce++;
       }
     }
+    node.blockChain.push(block);
   }
-
-  node.blockChain.push(block);
   node.ports.forEach(port => {
     if (node.port != port) {
       axios.post("http://localhost:" + port + "/sync", { block: block });
